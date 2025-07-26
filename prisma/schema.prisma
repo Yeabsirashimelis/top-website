@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model course {
+  id          Int          @id @default(autoincrement())
+  title       String
+  image       String
+  price       Int
+  description String
+  createdAt   DateTime     @default(now())
+  enrollment  enrollment[]
+  subject     subject[]
+}
+
+model enrollment {
+  id         Int      @id @default(autoincrement())
+  studentId  Int
+  courseId   Int
+  receiptUrl String
+  referredBy String?
+  approved   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  course     course   @relation(fields: [courseId], references: [id])
+  user       user     @relation(fields: [studentId], references: [id])
+
+  @@index([courseId])
+  @@index([studentId])
+}
+
+model note {
+  id        Int     @id @default(autoincrement())
+  fileUrl   String
+  subjectId Int
+  subject   subject @relation(fields: [subjectId], references: [id])
+
+  @@index([subjectId])
+}
+
+model payoutrequest {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  amount      Int
+  fullName    String
+  bankAccount String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  user        user     @relation(fields: [userId], references: [id])
+}
+
+model question {
+  id            Int             @id @default(autoincrement())
+  type          String
+  content       String
+  subjectId     Int
+  correct       String
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  createdAt     DateTime        @default(now())
+  subject       subject         @relation(fields: [subjectId], references: [id])
+  StudentAnswer StudentAnswer[]
+
+  @@index([subjectId])
+}
+
+model subject {
+  id       Int        @id @default(autoincrement())
+  title    String
+  courseId Int
+  note     note[]
+  question question[]
+  course   course     @relation(fields: [courseId], references: [id])
+  video    video[]
+
+  @@index([courseId])
+}
+
+model user {
+  id            Int             @id @default(autoincrement())
+  fullName      String
+  email         String          @unique
+  password      String
+  role          String          @default("student")
+  referralCode  String          @unique
+  referredBy    String?
+  createdAt     DateTime        @default(now())
+  enrollment    enrollment[]
+  payoutrequest payoutrequest[]
+  StudentAnswer StudentAnswer[]
+}
+
+model video {
+  id        Int     @id @default(autoincrement())
+  url       String
+  thumbnail String
+  subjectId Int
+  subject   subject @relation(fields: [subjectId], references: [id])
+
+  @@index([subjectId])
+}
+
+model StudentAnswer {
+  id         Int      @id @default(autoincrement())
+  studentId  Int
+  subjectId  Int
+  questionId Int
+  selected   String
+  isCorrect  Boolean
+  type       String
+  createdAt  DateTime @default(now())
+  user       user     @relation(fields: [studentId], references: [id])
+  question   question @relation(fields: [questionId], references: [id])
+}
