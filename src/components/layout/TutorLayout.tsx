@@ -11,6 +11,7 @@ const links = [
   { href: '/tutor/upload', label: 'Upload' },
   { href: '/tutor/materials', label: 'Materials' },
   { href: '/tutor/profile', label: 'My Profile' },
+  { href: '/tutor/online-classroom', label: 'Online Class' },
 ];
 
 export default function TutorLayout({ children }: { children: React.ReactNode }) {

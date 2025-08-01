@@ -13,6 +13,7 @@ const dashboardLinks = [
   { href: '/student/gpa', label: 'GPA' },
   { href: '/student/referral', label: 'Referral' },
   { href: '/student/profile', label: 'My Profile' },
+  { href: '/student/classrooms', label: 'classrooms' },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
